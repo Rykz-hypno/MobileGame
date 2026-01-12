@@ -3,14 +3,31 @@ using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
+    public PlayerCombat playerCombat;
     private float horizontalInput;
-    private float speed = 5f;
+    private float speed = 7f;
     private float jumpForce = 12f;
     private bool isFacingRight = true;
 
+
+    [SerializeField] private Animator animator;
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayer;
+
+    //TODO: koppla rätt så att animationen spelas upp vid attack, just nu är det bara movement animationer som funkar
+    public void OnAttack(InputAction.CallbackContext context)
+    {
+
+        if (context.performed)
+        {
+            playerCombat.Attack();
+        }
+        else
+        {
+            playerCombat.StopAttack();
+        }
+    }
 
     private void FixedUpdate()
     {
@@ -21,8 +38,16 @@ public class PlayerMovement : MonoBehaviour
     public void OnMove(InputAction.CallbackContext context)
     {
         horizontalInput = context.ReadValue<Vector2>().x;
-        Debug.Log(horizontalInput);
         Flip();
+
+        if (horizontalInput != 0f)
+        {
+            animator.SetBool("isRunning", true);
+        }
+        else
+        {
+            animator.SetBool("isRunning", false);
+        }
     }
 
     // Kallas av Input System (Jump action)
