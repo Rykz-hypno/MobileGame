@@ -17,17 +17,19 @@ public class PlayerMovement : MonoBehaviour
 
     //TODO: koppla rätt så att animationen spelas upp vid attack, just nu är det bara movement animationer som funkar
     public void OnAttack(InputAction.CallbackContext context)
+{
+    if (context.started)
     {
-
-        if (context.performed)
-        {
-            playerCombat.Attack();
-        }
-        else
-        {
-            playerCombat.StopAttack();
-        }
+        playerCombat.Attack();
+        Debug.Log("player is attacking");
     }
+    else if (context.canceled)
+    {
+        playerCombat.StopAttack();
+    }
+}
+
+
 
     private void FixedUpdate()
     {
