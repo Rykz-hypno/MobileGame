@@ -15,7 +15,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayer;
 
-    //TODO: koppla rätt så att animationen spelas upp vid attack, just nu är det bara movement animationer som funkar
+
     public void OnAttack(InputAction.CallbackContext context)
 {
     if (context.started)
@@ -32,7 +32,7 @@ public class PlayerMovement : MonoBehaviour
         rb.linearVelocity = new Vector2(horizontalInput * speed, rb.linearVelocity.y);
     }
 
-    // Kallas av Input System (Move action)
+
     public void OnMove(InputAction.CallbackContext context)
     {
         horizontalInput = context.ReadValue<Vector2>().x;
@@ -48,7 +48,7 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    // Kallas av Input System (Jump action)
+
     public void OnJump(InputAction.CallbackContext context)
     {
         if (context.started && IsGrounded())
