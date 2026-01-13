@@ -6,10 +6,7 @@ public class PlayerCombat : MonoBehaviour
 
     public void Attack()
     {
-        animator.SetBool("isAttacking", true);
+        animator.SetTrigger("Attack");
     }
-    public void StopAttack()
-    {
-        animator.SetBool("isAttacking", false);
-    }
+
 }

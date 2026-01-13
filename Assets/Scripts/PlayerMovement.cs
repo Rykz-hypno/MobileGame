@@ -23,10 +23,6 @@ public class PlayerMovement : MonoBehaviour
         playerCombat.Attack();
         Debug.Log("player is attacking");
     }
-    else if (context.canceled)
-    {
-        playerCombat.StopAttack();
-    }
 }
 
 
