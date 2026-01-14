@@ -29,6 +29,20 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    public void DealDamage()
+    {
+        Collider2D [] hitEnemies = Physics2D.OverlapCircleAll(playerCombat.attackPoint.position, playerCombat.weaponRange, playerCombat.enemyLayers);
+
+        if (hitEnemies.Length > 0)
+        {
+            foreach (Collider2D enemy in hitEnemies)
+            {
+                hitEnemies[0].GetComponent<EnemyScript>().TakeDamage(playerCombat.attackDamage);
+            }
+        }
+
+    }
+
 
 
     private void FixedUpdate()

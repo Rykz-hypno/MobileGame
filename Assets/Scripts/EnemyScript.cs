@@ -2,14 +2,17 @@ using UnityEngine;
 
 public class EnemyScript : MonoBehaviour
 {
+    public int currentHealth;
+    public int maxHealth = 100;
+
     public GameObject player;
     public float speed = 3f;
 
     private float distanceToPlayer;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+
     void Start()
     {
-        
+        currentHealth = maxHealth;
     }
 
     // Update is called once per frame
@@ -18,6 +21,20 @@ public class EnemyScript : MonoBehaviour
         distanceToPlayer = Vector3.Distance(transform.position, player.transform.position);
         
         transform.position = Vector3.MoveTowards(transform.position, player.transform.position, speed * Time.deltaTime);
+    }
 
+    public void TakeDamage(int damage)
+    {
+        currentHealth -= damage;
+
+        if (currentHealth <= 0)
+        {
+            Die();
+        }
+    }
+
+    private void Die()
+    {
+        Destroy(gameObject);
     }
 }
