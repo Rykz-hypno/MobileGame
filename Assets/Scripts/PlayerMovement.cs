@@ -20,36 +20,34 @@ public class PlayerMovement : MonoBehaviour
     private const float GROUND_CHECK_COOLDOWN = 0.05f;
     private bool cachedIsGrounded = false;
 
-
-    public void OnAttack(InputAction.CallbackContext context)
+    public void Attack()
+    {
+        animator.SetTrigger("Attack");
+    }
+        public void OnAttack(InputAction.CallbackContext context)
     {
         if (context.started)
         {
-            playerCombat.Attack();
+            Attack();
         }
     }
 
     public void DealDamage()
     {
         Collider2D [] hitEnemies = Physics2D.OverlapCircleAll(playerCombat.attackPoint.position, playerCombat.weaponRange, playerCombat.enemyLayers);
-
         if (hitEnemies.Length > 0)
         {
             foreach (Collider2D enemy in hitEnemies)
             {
-                hitEnemies[0].GetComponent<EnemyScript>().TakeDamage(playerCombat.attackDamage);
+                enemy.GetComponent<EnemyScript>().TakeDamage(playerCombat.attackDamage);
             }
         }
 
     }
-
-
-
     private void FixedUpdate()
     {
         rb.linearVelocity = new Vector2(horizontalInput * speed, rb.linearVelocity.y);
     }
-
 
     public void OnMove(InputAction.CallbackContext context)
     {
@@ -64,7 +62,6 @@ public class PlayerMovement : MonoBehaviour
             animator.SetBool("isRunning", isRunning);
         }
     }
-
 
     public void OnJump(InputAction.CallbackContext context)
     {

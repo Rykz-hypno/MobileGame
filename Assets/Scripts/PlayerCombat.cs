@@ -1,5 +1,5 @@
 using UnityEngine;
-
+using UnityEngine.InputSystem;
 public class PlayerCombat : MonoBehaviour
 {
     public Transform attackPoint;
@@ -9,10 +9,6 @@ public class PlayerCombat : MonoBehaviour
 
     public Animator animator;
 
-    public void Attack()
-    {
-        animator.SetTrigger("Attack");
-        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, weaponRange, enemyLayers);
-    }
+
 
 }
