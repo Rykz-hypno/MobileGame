@@ -1,2 +1,13 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+# Tvinga de viktigaste Unity-mapparna att räknas som C#
+Assets/** linguist-language=C#
+Packages/** linguist-language=C#
+ProjectSettings/** linguist-language=C#
+
+# Markera stora binärer / byggartefakter som vendored/generated så de inte räknas i språkstatistik
+Library/** linguist-generated=true
+Temp/** linguist-generated=true
+Builds/** linguist-generated=true
+*.dll linguist-vendored=true
+*.so linguist-vendored=true
+*.a linguist-vendored=true
+*.jar linguist-vendored=true
