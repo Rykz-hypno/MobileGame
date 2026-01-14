@@ -8,22 +8,26 @@ public class PlayerMovement : MonoBehaviour
     private float speed = 7f;
     private float jumpForce = 12f;
     private bool isFacingRight = true;
-
+    private bool isRunning = false;
 
     [SerializeField] private Animator animator;
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private float groundCheckRadius = 0.2f;
+
+    private float nextGroundCheckTime = 0f;
+    private const float GROUND_CHECK_COOLDOWN = 0.05f;
+    private bool cachedIsGrounded = false;
 
 
     public void OnAttack(InputAction.CallbackContext context)
-{
-    if (context.started)
     {
-        playerCombat.Attack();
-        Debug.Log("player is attacking");
+        if (context.started)
+        {
+            playerCombat.Attack();
+        }
     }
-}
 
 
 
@@ -38,13 +42,12 @@ public class PlayerMovement : MonoBehaviour
         horizontalInput = context.ReadValue<Vector2>().x;
         Flip();
 
-        if (horizontalInput != 0f)
+        bool shouldRun = horizontalInput != 0f;
+
+        if (shouldRun != isRunning)
         {
-            animator.SetBool("isRunning", true);
-        }
-        else
-        {
-            animator.SetBool("isRunning", false);
+            isRunning = shouldRun;
+            animator.SetBool("isRunning", isRunning);
         }
     }
 
@@ -64,7 +67,13 @@ public class PlayerMovement : MonoBehaviour
 
     private bool IsGrounded()
     {
-        return Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
+
+        if (Time.time >= nextGroundCheckTime)
+        {
+            cachedIsGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
+            nextGroundCheckTime = Time.time + GROUND_CHECK_COOLDOWN;
+        }
+        return cachedIsGrounded;
     }
 
     private void Flip()
@@ -72,9 +81,8 @@ public class PlayerMovement : MonoBehaviour
         if (isFacingRight && horizontalInput < 0f || !isFacingRight && horizontalInput > 0f)
         {
             isFacingRight = !isFacingRight;
-            Vector3 localScale = transform.localScale;
-            localScale.x *= -1;
-            transform.localScale = localScale;
+
+            transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y, transform.localScale.z);
         }
     }
 }
