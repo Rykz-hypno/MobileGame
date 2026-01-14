@@ -1,24 +1,17 @@
-# Unity generated
-[Ll]ibrary/
-[Tt]emp/
-[Oo]bj/
-[Bb]uild/
-[Bb]uilds/
-[Ll]ogs/
-[Uu]ser[Ss]ettings/
+# Unity
+/[Ll]ibrary/
+/[Tt]emp/
+/[Bb]uild/
+/obj/
+/*.apk
+/*.aab
 
-# IDEs
-.vs/
-.vscode/
-.idea/
+# Tillfällig/utbyggd mapp som finns i ditt repo
+/.utmp/
 
-# Visual Studio / Rider
-*.csproj
-*.sln
-*.slnx
-*.user
-*.unityproj
-
-# OS
+# OS- och editor-filer
 .DS_Store
-Thumbs.db
+.vscode/
+*.suo
+*.user
+*.userprefs

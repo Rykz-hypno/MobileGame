@@ -1,2 +1,12 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+# Markera Unity Assets som C# så att .cs räknas rätt
+Assets/** linguist-language=C#
+
+# Markera vanliga Unity- och build-artifakter som vendored/genererade så de inte räknas
+.utmp/** linguist-vendored
+Library/** linguist-vendored
+Temp/** linguist-vendored
+obj/** linguist-vendored
+Build/** linguist-vendored
+Assets/Plugins/** linguist-vendored
+Packages/** linguist-vendored
+ProjectSettings/** linguist-vendored
