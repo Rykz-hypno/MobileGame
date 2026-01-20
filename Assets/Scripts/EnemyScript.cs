@@ -5,7 +5,7 @@ public class EnemyScript : MonoBehaviour
     public int currentHealth;
     public int maxHealth = 100;
 
-    public GameObject player;
+    private GameObject player;
     public float speed = 3f;
 
     private float distanceToPlayer;
@@ -13,11 +13,14 @@ public class EnemyScript : MonoBehaviour
     void Start()
     {
         currentHealth = maxHealth;
+        player = GameObject.FindGameObjectWithTag("Player");
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (player == null) return;
+        
         distanceToPlayer = Vector3.Distance(transform.position, player.transform.position);
         
         transform.position = Vector3.MoveTowards(transform.position, player.transform.position, speed * Time.deltaTime);
