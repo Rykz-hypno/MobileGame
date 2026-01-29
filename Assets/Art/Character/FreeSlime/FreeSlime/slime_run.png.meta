@@ -132,11 +132,11 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 5
-        y: 6
+        y: 7
         width: 21
-        height: 18
+        height: 19
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -153,12 +153,12 @@ TextureImporter:
       name: slime_run_1
       rect:
         serializedVersion: 2
-        x: 36
-        y: 6
-        width: 23
-        height: 16
+        x: 37
+        y: 7
+        width: 21
+        height: 19
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -175,12 +175,12 @@ TextureImporter:
       name: slime_run_2
       rect:
         serializedVersion: 2
-        x: 68
-        y: 6
-        width: 23
-        height: 15
+        x: 69
+        y: 7
+        width: 21
+        height: 19
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -197,12 +197,12 @@ TextureImporter:
       name: slime_run_3
       rect:
         serializedVersion: 2
-        x: 100
-        y: 6
-        width: 23
-        height: 15
+        x: 101
+        y: 7
+        width: 21
+        height: 19
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -219,12 +219,12 @@ TextureImporter:
       name: slime_run_4
       rect:
         serializedVersion: 2
-        x: 135
-        y: 8
-        width: 17
+        x: 133
+        y: 7
+        width: 21
         height: 19
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -242,11 +242,11 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 165
-        y: 8
+        y: 7
         width: 21
-        height: 18
+        height: 19
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -263,7 +263,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 322bcd9bc8d9c5b47b6afdb05db5162b
     internalID: 0
     vertices: []
     indices: 
@@ -279,6 +279,7 @@ TextureImporter:
       slime_run_3: 1577223000374513219
       slime_run_4: -8519062292244568244
       slime_run_5: 4124917863510906816
+      slime_run_6: 602814488
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
