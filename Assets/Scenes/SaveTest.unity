@@ -845,7 +845,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.1387916, y: 0.41408157, z: -10}
+  m_LocalPosition: {x: -2.1387916, y: 0.6440816, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -863,7 +863,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f97ccda84750e146bf6e9cf4595e61b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraScript
-  player: {fileID: 587327964}
+  player: {fileID: 0}
   SmoothSpeedX: 0.3
   SmoothSpeedY: 0.05
 --- !u!114 &519420034
@@ -1526,7 +1526,7 @@ Transform:
   m_GameObject: {fileID: 1307531533}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -2.1387916, y: 0.41408157, z: -10}
+  m_LocalPosition: {x: -2.1387916, y: 0.6440816, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -5234,7 +5234,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7381625759325416710, guid: 9ff320bf892f40d43ae2a9097163a29b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -3.2
+      value: -2.97
       objectReference: {fileID: 0}
     - target: {fileID: 7381625759325416710, guid: 9ff320bf892f40d43ae2a9097163a29b, type: 3}
       propertyPath: m_LocalPosition.z
