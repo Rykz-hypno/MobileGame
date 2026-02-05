@@ -285,5 +285,5 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   animator: {fileID: 3848853829348502238}
-  playerHealth: 10
+  playerHealth: 12
   damagePerHit: 1
