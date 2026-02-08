@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Video;
 
 public class GameManager : MonoBehaviour
 {
@@ -24,33 +25,6 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    private void OnEnable()
-    {
-        _escapeAction = new InputAction("Escape", InputActionType.Button, "<Keyboard>/escape");
-        _escapeAction.Enable();
-        _escapeAction.performed += OnEscapePressed;
-    }
-
-    private void OnDisable()
-    {
-        _escapeAction.performed -= OnEscapePressed;
-        _escapeAction.Dispose();
-    }
-
-    private void OnEscapePressed(InputAction.CallbackContext context)
-    {
-        Debug.Log("ESC tangenten trycktes!");
-        
-        if (_currentState == GameState.Playing)
-        {
-            SetGameState(GameState.Paused);
-        }
-        else if (_currentState == GameState.Paused)
-        {
-            SetGameState(GameState.Playing);
-        }
-    }
-
     public enum GameState
     {
         MainMenu,
@@ -73,9 +47,23 @@ public class GameManager : MonoBehaviour
             Time.timeScale = 1f; // Återuppta spelet
         }
     }
+    public void LoadScene(string SceneName)
+    {
+        Time.timeScale = 1f;
+        UnityEngine.SceneManagement.SceneManager.LoadScene(SceneName);
+    }
     
     public GameState GetGameState()
     {
         return _currentState;
+    }
+    public void StartGame()
+    {
+        LoadScene("MainScene");
+        SetGameState(GameState.Playing);
+    }
+    public void QuitGame()
+    {
+        Application.Quit();
     }
 }
