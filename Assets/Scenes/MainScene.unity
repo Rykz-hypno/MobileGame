@@ -2169,7 +2169,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1521427458
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2185,7 +2185,8 @@ MonoBehaviour:
   objectToSpawn: {fileID: 4152884040272281401, guid: 421eeecedd9c50d4e89f76b574472779, type: 3}
   LeftSpawnPoint: {fileID: 2036878962}
   RightSpawnPoint: {fileID: 1976395370}
-  spawnInterval: 2.5
+  spawnInterval: 3
+  maxSpawnCount: 10
 --- !u!4 &1521427459
 Transform:
   m_ObjectHideFlags: 0

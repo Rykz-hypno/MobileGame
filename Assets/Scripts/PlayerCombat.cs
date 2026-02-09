@@ -7,7 +7,7 @@ public class PlayerCombat : MonoBehaviour
     public int attackDamage = 20;
     public LayerMask enemyLayers;
 
-    public Animator animator;
+    public Animator PlayerAnim;
 
     public int playerHealth = 10;
     public int damagePerHit = 1;
@@ -18,6 +18,7 @@ public class PlayerCombat : MonoBehaviour
         {
             Debug.Log("Player Hit by Enemy");
             TakeDamage();
+            PlayerAnim.SetTrigger("Hurt");
         }
     }
 

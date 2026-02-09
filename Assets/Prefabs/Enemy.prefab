@@ -107,7 +107,7 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 0.2
+  m_Mass: 1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_GravityScale: 2
@@ -139,10 +139,11 @@ MonoBehaviour:
   speed: 3
   knockbackForce: 10
   knockbackDuration: 0.4
-  jumpForce: 1.5
+  jumpForce: 12
   jumpCooldown: 1.5
-  jumpDistance: 3
-  groundDrag: 0.5
+  jumpDistance: 13
+  wallDetectDistance: 2
+  raycastDistance: 1
 --- !u!95 &3482643918491413600
 Animator:
   serializedVersion: 7
