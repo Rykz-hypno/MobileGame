@@ -9,7 +9,7 @@ public class PlayerCombat : MonoBehaviour
 
     public Animator PlayerAnim;
 
-    public int playerHealth = 10;
+    public int playerHealth = 12;
     public int damagePerHit = 1;
 
     void OnCollisionEnter2D(Collision2D other)

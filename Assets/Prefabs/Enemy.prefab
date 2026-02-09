@@ -138,12 +138,12 @@ MonoBehaviour:
   maxHealth: 4
   speed: 3
   knockbackForce: 10
-  knockbackDuration: 0.4
-  jumpForce: 12
-  jumpCooldown: 1.5
+  knockbackDuration: 0.5
+  jumpForce: 14
+  jumpCooldown: 1
   jumpDistance: 13
-  wallDetectDistance: 2
-  raycastDistance: 1
+  wallDetectDistance: 5
+  raycastDistance: 5
 --- !u!95 &3482643918491413600
 Animator:
   serializedVersion: 7

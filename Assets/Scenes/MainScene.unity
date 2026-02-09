@@ -1296,6 +1296,7 @@ GameObject:
   - component: {fileID: 956389011}
   - component: {fileID: 956389013}
   - component: {fileID: 956389012}
+  - component: {fileID: 956389014}
   m_Layer: 5
   m_Name: HealthBar
   m_TagString: Untagged
@@ -1360,6 +1361,34 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 956389010}
   m_CullTransparentMesh: 1
+--- !u!114 &956389014
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 956389010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f680f253814aea34fbfa62648ae091df, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HealthBar
+  healthBarImage: {fileID: 956389012}
+  playerCombat: {fileID: 1800192047}
+  healthSprites:
+  - {fileID: -8947092142268159272, guid: 0d1a30afd57e9f943b33928a7a99ddf6, type: 3}
+  - {fileID: -5819280986954085950, guid: 0d1a30afd57e9f943b33928a7a99ddf6, type: 3}
+  - {fileID: -543740768492671217, guid: 0d1a30afd57e9f943b33928a7a99ddf6, type: 3}
+  - {fileID: 825211415637037061, guid: 0d1a30afd57e9f943b33928a7a99ddf6, type: 3}
+  - {fileID: 3210081985293755592, guid: 0d1a30afd57e9f943b33928a7a99ddf6, type: 3}
+  - {fileID: -4923013781261484007, guid: 0d1a30afd57e9f943b33928a7a99ddf6, type: 3}
+  - {fileID: -4846609364557365296, guid: 0d1a30afd57e9f943b33928a7a99ddf6, type: 3}
+  - {fileID: -975219983752901406, guid: 0d1a30afd57e9f943b33928a7a99ddf6, type: 3}
+  - {fileID: -5654696916210780711, guid: 0d1a30afd57e9f943b33928a7a99ddf6, type: 3}
+  - {fileID: 3743342299885926697, guid: 0d1a30afd57e9f943b33928a7a99ddf6, type: 3}
+  - {fileID: 2051580152829552303, guid: 0d1a30afd57e9f943b33928a7a99ddf6, type: 3}
+  - {fileID: -296734208616171541, guid: 0d1a30afd57e9f943b33928a7a99ddf6, type: 3}
+  maxHealth: 12
 --- !u!1 &1123354768
 GameObject:
   m_ObjectHideFlags: 0
@@ -1744,7 +1773,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1348934605
 Transform:
   m_ObjectHideFlags: 0
@@ -1863,19 +1892,7 @@ CompositeCollider2D:
   m_GeometryType: 1
   m_GenerationType: 0
   m_EdgeRadius: 0
-  m_ColliderPaths:
-  - m_Collider: {fileID: 1348934606}
-    m_ColliderPaths:
-    - - X: -19782608
-        Y: 20217390
-      - X: -99782608
-        Y: 20217390
-      - X: -100217392
-        Y: 19782608
-      - X: -100217392
-        Y: 9782609
-      - X: -19782608
-        Y: 9782609
+  m_ColliderPaths: []
   m_CompositePaths:
     m_Paths:
     - - {x: -1.9782901, y: 0.97826093}
@@ -2599,7 +2616,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!212 &1696978740
 SpriteRenderer:
   serializedVersion: 2
@@ -2888,6 +2905,22 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 519420031}
+--- !u!114 &1800192047 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5152642721756017077, guid: 9ff320bf892f40d43ae2a9097163a29b, type: 3}
+  m_PrefabInstance: {fileID: 7876143250322199889}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1800192040}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef9ed57cd7e1de445b8fa0a1f2c6cc8c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerCombat
+--- !u!95 &1800192048 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 3848853829348502238, guid: 9ff320bf892f40d43ae2a9097163a29b, type: 3}
+  m_PrefabInstance: {fileID: 7876143250322199889}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1899641380
 GameObject:
   m_ObjectHideFlags: 0
@@ -5807,6 +5840,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 5152642721756017077, guid: 9ff320bf892f40d43ae2a9097163a29b, type: 3}
+      propertyPath: PlayerAnim
+      value: 
+      objectReference: {fileID: 1800192048}
     - target: {fileID: 7381625759325416710, guid: 9ff320bf892f40d43ae2a9097163a29b, type: 3}
       propertyPath: m_LocalPosition.x
       value: -1.92
