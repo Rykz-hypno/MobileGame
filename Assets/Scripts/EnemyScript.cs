@@ -9,16 +9,16 @@ public class EnemyScript : MonoBehaviour
     public float speed = 3f;
     public float knockbackForce = 5f;
     public float knockbackDuration = 0.2f;
-    // public float jumpForce = 01.5f;
-    // public float jumpCooldown = 1.5f;
-    // public float jumpDistance = 3f;
+    public float jumpForce = 1.5f;
+    public float jumpCooldown = 1.5f;
+    public float jumpDistance = 3f;
     public float groundDrag = 0.5f;
 
     private float distanceToPlayer;
     private Rigidbody2D rb;
     private float knockbackTimer = 0f;
-        // private float jumpTimer = 0f;
-        // private bool isGrounded = false;
+    private float jumpTimer = 0f;
+    private bool isGrounded = false;
 
     void Start()
     {
@@ -31,7 +31,7 @@ public class EnemyScript : MonoBehaviour
     {
         if (player == null) return;
 
-        // jumpTimer -= Time.deltaTime;
+        jumpTimer -= Time.deltaTime;
 
         if (knockbackTimer > 0)
         {
@@ -39,43 +39,44 @@ public class EnemyScript : MonoBehaviour
             return;
         }
 
-    //     distanceToPlayer = Vector3.Distance(transform.position, player.transform.position);
+        distanceToPlayer = Vector3.Distance(transform.position, player.transform.position);
 
-    //     Vector3 direction = (player.transform.position - transform.position).normalized;
+        Vector3 direction = (player.transform.position - transform.position).normalized;
         
-    //     // Rörelse
-    //     rb.linearVelocity = new Vector2(direction.x * speed, rb.linearVelocity.y);
+        // Fortsätt röra sig mot spelaren även under hopp
+        rb.linearVelocity = new Vector2(direction.x * speed, rb.linearVelocity.y);
 
-    //     // Hoppa när spelaren är ovanför och cooldown är klar
-    //     float verticalDistance = player.transform.position.y - transform.position.y;
-    //     if (verticalDistance > 0.5f && jumpTimer <= 0 && isGrounded)
-    //     {
-    //         Jump();
-    //         jumpTimer = jumpCooldown;
-    //     }
-    // }
-
-    // void Jump()
-    // {
-    //     rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce); // Direktsätt Y-hastigheten
-    // }
-
-    // void OnCollisionEnter2D(Collision2D collision)
-    // {
-    //     // Kontrollera om fienden är på marken
-    //     if (collision.gameObject.CompareTag("Ground"))
-    //     {
-    //         isGrounded = true;
-    //     }
+        // Hoppa när spelaren är högre upp OCH inom hoppavståndet
+        float verticalDistance = player.transform.position.y - transform.position.y;
+        float horizontalDistance = Mathf.Abs(player.transform.position.x - transform.position.x);
+        
+        if (verticalDistance > 0.5f && horizontalDistance < jumpDistance && jumpTimer <= 0 && isGrounded)
+        {
+            Jump();
+            jumpTimer = jumpCooldown;
+        }
     }
 
-    // void OnCollisionExit2D(Collision2D collision)
-    // {
-    //     if (collision.gameObject.CompareTag("Ground"))
-    //     {
-    //         isGrounded = false;
-    //     }
-    // }
+    void Jump()
+    {
+        rb.AddForce(new Vector2(0f, jumpForce), ForceMode2D.Impulse); 
+    }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            isGrounded = true;
+        }
+    }
+
+    void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            isGrounded = false;
+        }
+    }
 
     public void TakeDamage(int damage)
     {
