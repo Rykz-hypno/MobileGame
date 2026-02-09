@@ -9,9 +9,9 @@ public class EnemyScript : MonoBehaviour
     public float speed = 3f;
     public float knockbackForce = 5f;
     public float knockbackDuration = 0.2f;
-    public float jumpForce = 1.5f;
-    public float jumpCooldown = 1.5f;
-    public float jumpDistance = 3f;
+    public float jumpForce = .3f;
+    public float jumpCooldown = 0.3f;
+    public float jumpDistance = 2f;
     public float groundDrag = 0.5f;
 
     private float distanceToPlayer;
@@ -43,14 +43,17 @@ public class EnemyScript : MonoBehaviour
 
         Vector3 direction = (player.transform.position - transform.position).normalized;
         
-        // Fortsätt röra sig mot spelaren även under hopp
-        rb.linearVelocity = new Vector2(direction.x * speed, rb.linearVelocity.y);
+        // Endast röra sig horisontellt när på marken för att förhindra luftkontroll
+        if (isGrounded)
+        {
+            rb.linearVelocity = new Vector2(direction.x * speed, rb.linearVelocity.y);
+        }
 
-        // Hoppa när spelaren är högre upp OCH inom hoppavståndet
+        // Hoppa med begränsningar
         float verticalDistance = player.transform.position.y - transform.position.y;
         float horizontalDistance = Mathf.Abs(player.transform.position.x - transform.position.x);
         
-        if (verticalDistance > 0.5f && horizontalDistance < jumpDistance && jumpTimer <= 0 && isGrounded)
+        if (verticalDistance > 0.5f && verticalDistance < 1f && horizontalDistance < jumpDistance && jumpTimer <= 0 && isGrounded)
         {
             Jump();
             jumpTimer = jumpCooldown;
