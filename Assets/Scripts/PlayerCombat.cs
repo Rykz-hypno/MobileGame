@@ -12,6 +12,17 @@ public class PlayerCombat : MonoBehaviour
     public int playerHealth = 12;
     public int damagePerHit = 1;
 
+    public void Attack()
+    {
+        PlayerAnim.SetTrigger("Attack");
+    }
+        public void OnAttack(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            Attack();
+        }
+    }
     void OnCollisionEnter2D(Collision2D other)
     {
         if (other.gameObject.CompareTag("Enemy"))

@@ -20,18 +20,6 @@ public class PlayerMovement : MonoBehaviour
     private const float GROUND_CHECK_COOLDOWN = 0.05f;
     private bool cachedIsGrounded = false;
 
-    public void Attack()
-    {
-        animator.SetTrigger("Attack");
-    }
-        public void OnAttack(InputAction.CallbackContext context)
-    {
-        if (context.started)
-        {
-            Attack();
-        }
-    }
-
     public void DealDamage()
     {
         Collider2D [] hitEnemies = Physics2D.OverlapCircleAll(playerCombat.attackPoint.position, playerCombat.weaponRange, playerCombat.enemyLayers);
