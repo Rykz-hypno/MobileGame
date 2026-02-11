@@ -9,7 +9,7 @@ public class EnemyScript : MonoBehaviour
     public float speed = 3f;
     public float knockbackForce = 5f;
     public float knockbackDuration = 0.2f;
-    public float jumpForce = 0.3f;
+    public float jumpForce = 10f;
     public float jumpCooldown = 1f;
     public float jumpDistance = 2f;
     public float wallDetectDistance = 0.5f;
@@ -44,33 +44,55 @@ public class EnemyScript : MonoBehaviour
         distanceToPlayer = Vector3.Distance(transform.position, player.transform.position);
         moveDirection = (player.transform.position - transform.position).normalized;
 
+        // Detektera vägg/plattform framåt
+        bool wallAhead = IsWallAhead(moveDirection.x);
+        
+        // Detektera vägg/plattform uppåt
+        bool platformAbove = IsPlatformAbove();
+
+        Vector2 actualMoveDirection = moveDirection;
+
+        // Om plattform finns uppåt, leta närmaste väg till fritt område
+        if (platformAbove)
+        {
+            // Prova att flytta åt höger först
+            if (!IsWallAhead(1f))
+            {
+                actualMoveDirection = Vector2.right;
+            }
+            // Annars prova åt vänster
+            else if (!IsWallAhead(-1f))
+            {
+                actualMoveDirection = Vector2.left;
+            }
+        }
+        // Om vägg framåt (men inte plattform ovanför), flytta åt sidan
+        else if (wallAhead && moveDirection.x != 0)
+        {
+            bool rightFree = !IsWallAhead(1f);
+            bool leftFree = !IsWallAhead(-1f);
+            
+            if (rightFree && moveDirection.x > 0)
+            {
+                actualMoveDirection = Vector2.right;
+            }
+            else if (leftFree && moveDirection.x < 0)
+            {
+                actualMoveDirection = Vector2.left;
+            }
+        }
+
         // Röra sig horisontellt endast på marken
         if (isGrounded)
         {
-            rb.linearVelocity = new Vector2(moveDirection.x * speed, rb.linearVelocity.y);
+            rb.linearVelocity = new Vector2(actualMoveDirection.x * speed, rb.linearVelocity.y);
         }
 
-        // Detektera vägg framåt
-        bool wallAhead = IsWallAhead(moveDirection.x);
-
-        // Hoppa ENDAST om det finns en vägg framåt eller spelaren är högre upp
-        float verticalDistance = player.transform.position.y - transform.position.y;
-        float horizontalDistance = Mathf.Abs(player.transform.position.x - transform.position.x);
-
-        if (isGrounded && jumpTimer <= 0 && horizontalDistance < jumpDistance)
+        // Hoppa bara när vägg blockerar vägen mot spelaren
+        if (isGrounded && jumpTimer <= 0 && wallAhead && !platformAbove)
         {
-            // Hoppa över vägg
-            if (wallAhead)
-            {
-                Jump();
-                jumpTimer = jumpCooldown;
-            }
-            // Hoppa när spelaren är högre upp (men inte för mycket)
-            else if (verticalDistance > 0.5f && verticalDistance < 2f)
-            {
-                Jump();
-                jumpTimer = jumpCooldown;
-            }
+            Jump();
+            jumpTimer = jumpCooldown;
         }
     }
 
@@ -81,6 +103,19 @@ public class EnemyScript : MonoBehaviour
         RaycastHit2D hit = Physics2D.Raycast(
             transform.position,
             rayDirection,
+            wallDetectDistance,
+            LayerMask.GetMask("Ground")
+        );
+
+        return hit.collider != null;
+    }
+
+    bool IsPlatformAbove()
+    {
+        // Raycast uppåt för att detektera plattform ovanför
+        RaycastHit2D hit = Physics2D.Raycast(
+            transform.position,
+            Vector2.up,
             wallDetectDistance,
             LayerMask.GetMask("Ground")
         );

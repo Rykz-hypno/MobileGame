@@ -142,8 +142,8 @@ MonoBehaviour:
   jumpForce: 14
   jumpCooldown: 1
   jumpDistance: 13
-  wallDetectDistance: 5
-  raycastDistance: 5
+  wallDetectDistance: 10
+  raycastDistance: 10
 --- !u!95 &3482643918491413600
 Animator:
   serializedVersion: 7
