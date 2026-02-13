@@ -1,131 +1,251 @@
+using Pathfinding;
+using System.Collections;
 using UnityEngine;
 
+[RequireComponent(typeof(Seeker), typeof(Rigidbody2D))]
 public class EnemyScript : MonoBehaviour
 {
+    [Header("Health")]
     public int currentHealth;
     public int maxHealth = 100;
 
-    private GameObject player;
-    public float speed = 3f;
+    [Header("Target")]
+    public Transform target;
+
+    [Header("Pathfinding")]
+    public float activateDistance = 50f;
+    public float pathUpdateSeconds = 0.5f;
+    public float nextWaypointDistance = 3f;
+
+    [Header("Movement")]
+    public float speed = 200f;
+    public float jumpForce = 100f;
+    public float jumpCooldown = 1f;
+    public float jumpNodeHeightRequirement = 0.8f;
+    public bool followEnabled = true;
+    public bool jumpEnabled = true;
+    public bool directionLookEnabled = true;
+
+    [Header("Platform Edge Detection")]
+    public float verticalDetourThreshold = 1.5f;
+    public float edgeDetectDistance = 2f;
+    public float edgeDetectStepSize = 0.3f;
+    public bool enableEdgeDetection = true;
+
+    [Header("Combat")]
     public float knockbackForce = 5f;
     public float knockbackDuration = 0.2f;
-    public float jumpForce = 10f;
-    public float jumpCooldown = 1f;
-    public float jumpDistance = 2f;
-    public float wallDetectDistance = 0.5f;
-    public float raycastDistance = 1f;
 
-    private float distanceToPlayer;
+    private Path path;
+    private int currentWaypoint;
+    private Seeker seeker;
     private Rigidbody2D rb;
-    private float knockbackTimer = 0f;
-    private float jumpTimer = 0f;
-    private bool isGrounded = false;
-    private Vector2 moveDirection = Vector2.zero;
+    private float knockbackTimer;
+    private bool isGrounded;
+    private bool isJumping;
+    private bool isInAir;
+    private bool isOnCoolDown;
+    private float lastMoveDir = 1f;
+    private Vector3 targetEdgePoint;
+    private bool hasFoundEdge;
+    private LayerMask groundLayer;
 
     void Start()
     {
         currentHealth = maxHealth;
-        player = GameObject.FindGameObjectWithTag("Player");
+        seeker = GetComponent<Seeker>();
         rb = GetComponent<Rigidbody2D>();
+        groundLayer = LayerMask.GetMask("Ground");
+
+        if (target == null)
+        {
+            GameObject player = GameObject.FindGameObjectWithTag("Player");
+            if (player != null)
+            {
+                target = player.transform;
+            }
+        }
+
+        isJumping = false;
+        isInAir = false;
+        isOnCoolDown = false;
+        hasFoundEdge = false;
+
+        InvokeRepeating("UpdatePath", 0f, pathUpdateSeconds);
     }
 
     void Update()
     {
-        if (player == null) return;
-
-        jumpTimer -= Time.deltaTime;
-
-        if (knockbackTimer > 0)
+        if (knockbackTimer > 0f)
         {
             knockbackTimer -= Time.deltaTime;
+        }
+    }
+
+    void FixedUpdate()
+    {
+        if (target == null) return;
+        if (knockbackTimer > 0f) return;
+
+        if (TargetInDistance() && followEnabled)
+        {
+            PathFollow();
+        }
+    }
+
+    void UpdatePath()
+    {
+        if (target == null) return;
+
+        if (followEnabled && TargetInDistance() && seeker.IsDone())
+        {
+            seeker.StartPath(rb.position, target.position, OnPathComplete);
+        }
+    }
+
+    void PathFollow()
+    {
+        if (path == null)
+        {
             return;
         }
 
-        distanceToPlayer = Vector3.Distance(transform.position, player.transform.position);
-        moveDirection = (player.transform.position - transform.position).normalized;
+        if (currentWaypoint >= path.vectorPath.Count)
+        {
+            return;
+        }
 
-        // Detektera vägg/plattform framåt
-        bool wallAhead = IsWallAhead(moveDirection.x);
+        Vector2 direction = Vector2.zero;
         
-        // Detektera vägg/plattform uppåt
-        bool platformAbove = IsPlatformAbove();
-
-        Vector2 actualMoveDirection = moveDirection;
-
-        // Om plattform finns uppåt, leta närmaste väg till fritt område
-        if (platformAbove)
+        if (enableEdgeDetection && IsDirectlyAboveTarget())
         {
-            // Prova att flytta åt höger först
-            if (!IsWallAhead(1f))
+            if (!hasFoundEdge)
             {
-                actualMoveDirection = Vector2.right;
+                FindNearestPlatformEdge();
             }
-            // Annars prova åt vänster
-            else if (!IsWallAhead(-1f))
+            if (hasFoundEdge)
             {
-                actualMoveDirection = Vector2.left;
+                direction = ((Vector2)targetEdgePoint - rb.position).normalized;
             }
         }
-        // Om vägg framåt (men inte plattform ovanför), flytta åt sidan
-        else if (wallAhead && moveDirection.x != 0)
+        
+        if (direction == Vector2.zero)
         {
-            bool rightFree = !IsWallAhead(1f);
-            bool leftFree = !IsWallAhead(-1f);
-            
-            if (rightFree && moveDirection.x > 0)
+            direction = ((Vector2)path.vectorPath[currentWaypoint] - rb.position).normalized;
+            if (direction.x != 0)
             {
-                actualMoveDirection = Vector2.right;
+                lastMoveDir = Mathf.Sign(direction.x);
             }
-            else if (leftFree && moveDirection.x < 0)
+        }
+        
+        Vector2 force = direction * speed;
+
+        if (jumpEnabled && isGrounded && !isInAir && !isOnCoolDown)
+        {
+            if (direction.y > jumpNodeHeightRequirement)
             {
-                actualMoveDirection = Vector2.left;
+                if (isInAir) return;
+                isJumping = true;
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+                StartCoroutine(JumpCoolDown());
             }
         }
 
-        // Röra sig horisontellt endast på marken
         if (isGrounded)
         {
-            rb.linearVelocity = new Vector2(actualMoveDirection.x * speed, rb.linearVelocity.y);
+            isJumping = false;
+            isInAir = false;
         }
-
-        // Hoppa bara när vägg blockerar vägen mot spelaren
-        if (isGrounded && jumpTimer <= 0 && wallAhead && !platformAbove)
+        else
         {
-            Jump();
-            jumpTimer = jumpCooldown;
+            isInAir = true;
+        }
+
+        rb.linearVelocity = new Vector2(force.x, rb.linearVelocity.y);
+
+        float distance = Vector2.Distance(rb.position, path.vectorPath[currentWaypoint]);
+        if (distance < nextWaypointDistance)
+        {
+            currentWaypoint++;
+        }
+
+        if (directionLookEnabled)
+        {
+            if (rb.linearVelocity.x > 0.05f)
+            {
+                transform.localScale = new Vector3(-1f * Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+            }
+            else if (rb.linearVelocity.x < -0.05f)
+            {
+                transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+            }
         }
     }
 
-    bool IsWallAhead(float direction)
+    bool IsDirectlyAboveTarget()
     {
-        // Raycast framåt för att detektera vägg
-        Vector2 rayDirection = new Vector2(direction, 0).normalized;
-        RaycastHit2D hit = Physics2D.Raycast(
-            transform.position,
-            rayDirection,
-            wallDetectDistance,
-            LayerMask.GetMask("Ground")
-        );
-
-        return hit.collider != null;
+        float verticalDelta = target.position.y - transform.position.y;
+        float horizontalDelta = Mathf.Abs(target.position.x - transform.position.x);
+        return verticalDelta < -verticalDetourThreshold && horizontalDelta < 3f;
     }
 
-    bool IsPlatformAbove()
+    void FindNearestPlatformEdge()
     {
-        // Raycast uppåt för att detektera plattform ovanför
-        RaycastHit2D hit = Physics2D.Raycast(
-            transform.position,
-            Vector2.up,
-            wallDetectDistance,
-            LayerMask.GetMask("Ground")
-        );
+        float stepSize = edgeDetectStepSize;
+        float searchDir = Mathf.Sign(target.position.x - transform.position.x);
+        if (Mathf.Abs(searchDir) < 0.01f)
+        {
+            searchDir = lastMoveDir;
+        }
 
-        return hit.collider != null;
+        Vector3 checkPos = transform.position;
+        float bestDistance = float.MaxValue;
+        Vector3 bestEdgePos = transform.position;
+
+        for (int i = 0; i < Mathf.Round(edgeDetectDistance / stepSize); i++)
+        {
+            checkPos.x += searchDir * stepSize;
+            RaycastHit2D hit = Physics2D.Raycast(checkPos, Vector2.down, 0.5f, groundLayer);
+            
+            if (hit.collider == null)
+            {
+                float distToEdge = Vector2.Distance(rb.position, new Vector2(checkPos.x, rb.position.y));
+                if (distToEdge < bestDistance)
+                {
+                    bestDistance = distToEdge;
+                    bestEdgePos = checkPos;
+                }
+                break;
+            }
+        }
+
+        if (bestDistance < float.MaxValue)
+        {
+            targetEdgePoint = bestEdgePos;
+            hasFoundEdge = true;
+        }
     }
 
-    void Jump()
+    bool TargetInDistance()
     {
-        rb.AddForce(new Vector2(0f, jumpForce), ForceMode2D.Impulse);
+        return Vector2.Distance(transform.position, target.position) < activateDistance;
+    }
+
+    void OnPathComplete(Path p)
+    {
+        if (!p.error)
+        {
+            path = p;
+            currentWaypoint = 0;
+            hasFoundEdge = false;
+        }
+    }
+
+    IEnumerator JumpCoolDown()
+    {
+        isOnCoolDown = true;
+        yield return new WaitForSeconds(jumpCooldown);
+        isOnCoolDown = false;
     }
 
     void OnCollisionEnter2D(Collision2D collision)
@@ -148,9 +268,9 @@ public class EnemyScript : MonoBehaviour
     {
         currentHealth -= damage;
 
-        if (player != null && rb != null)
+        if (target != null && rb != null)
         {
-            Vector3 knockbackDirection = (transform.position - player.transform.position).normalized;
+            Vector3 knockbackDirection = (transform.position - target.position).normalized;
             rb.linearVelocity = knockbackDirection * knockbackForce;
             knockbackTimer = knockbackDuration;
         }
@@ -161,7 +281,7 @@ public class EnemyScript : MonoBehaviour
         }
     }
 
-    private void Die()
+    void Die()
     {
         Destroy(gameObject);
     }
