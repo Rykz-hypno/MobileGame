@@ -25,12 +25,7 @@ public class EnemyScript : MonoBehaviour
     public bool followEnabled = true;
     public bool jumpEnabled = true;
     public bool directionLookEnabled = true;
-
-    [Header("Platform Edge Detection")]
-    public float verticalDetourThreshold = 1.5f;
-    public float edgeDetectDistance = 2f;
-    public float edgeDetectStepSize = 0.3f;
-    public bool enableEdgeDetection = true;
+    public bool axisAlignedMovement = true;
 
     [Header("Combat")]
     public float knockbackForce = 5f;
@@ -46,8 +41,6 @@ public class EnemyScript : MonoBehaviour
     private bool isInAir;
     private bool isOnCoolDown;
     private float lastMoveDir = 1f;
-    private Vector3 targetEdgePoint;
-    private bool hasFoundEdge;
     private LayerMask groundLayer;
 
     void Start()
@@ -69,7 +62,6 @@ public class EnemyScript : MonoBehaviour
         isJumping = false;
         isInAir = false;
         isOnCoolDown = false;
-        hasFoundEdge = false;
 
         InvokeRepeating("UpdatePath", 0f, pathUpdateSeconds);
     }
@@ -105,52 +97,38 @@ public class EnemyScript : MonoBehaviour
 
     void PathFollow()
     {
-        if (path == null)
+        if (path == null || currentWaypoint >= path.vectorPath.Count)
         {
             return;
         }
 
-        if (currentWaypoint >= path.vectorPath.Count)
+        // Calculate direction to current waypoint
+        Vector2 direction = ((Vector2)path.vectorPath[currentWaypoint] - rb.position).normalized;
+        if (direction.x != 0)
         {
-            return;
+            lastMoveDir = Mathf.Sign(direction.x);
         }
 
-        Vector2 direction = Vector2.zero;
-        
-        if (enableEdgeDetection && IsDirectlyAboveTarget())
+        // Snap to axis-aligned movement
+        if (axisAlignedMovement)
         {
-            if (!hasFoundEdge)
-            {
-                FindNearestPlatformEdge();
-            }
-            if (hasFoundEdge)
-            {
-                direction = ((Vector2)targetEdgePoint - rb.position).normalized;
-            }
-        }
-        
-        if (direction == Vector2.zero)
-        {
-            direction = ((Vector2)path.vectorPath[currentWaypoint] - rb.position).normalized;
-            if (direction.x != 0)
-            {
-                lastMoveDir = Mathf.Sign(direction.x);
-            }
+            direction = SnapToAxis(direction);
         }
         
         Vector2 force = direction * speed;
 
+        // Jump when needed
         if (jumpEnabled && isGrounded && !isInAir && !isOnCoolDown)
         {
             if (direction.y > jumpNodeHeightRequirement)
             {
-                if (isInAir) return;
                 isJumping = true;
                 rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
                 StartCoroutine(JumpCoolDown());
             }
         }
 
+        // Track air state
         if (isGrounded)
         {
             isJumping = false;
@@ -161,14 +139,17 @@ public class EnemyScript : MonoBehaviour
             isInAir = true;
         }
 
+        // Apply horizontal movement
         rb.linearVelocity = new Vector2(force.x, rb.linearVelocity.y);
 
+        // Move to next waypoint when close enough
         float distance = Vector2.Distance(rb.position, path.vectorPath[currentWaypoint]);
         if (distance < nextWaypointDistance)
         {
             currentWaypoint++;
         }
 
+        // Flip sprite based on movement direction
         if (directionLookEnabled)
         {
             if (rb.linearVelocity.x > 0.05f)
@@ -182,53 +163,20 @@ public class EnemyScript : MonoBehaviour
         }
     }
 
-    bool IsDirectlyAboveTarget()
-    {
-        float verticalDelta = target.position.y - transform.position.y;
-        float horizontalDelta = Mathf.Abs(target.position.x - transform.position.x);
-        return verticalDelta < -verticalDetourThreshold && horizontalDelta < 3f;
-    }
-
-    void FindNearestPlatformEdge()
-    {
-        float stepSize = edgeDetectStepSize;
-        float searchDir = Mathf.Sign(target.position.x - transform.position.x);
-        if (Mathf.Abs(searchDir) < 0.01f)
-        {
-            searchDir = lastMoveDir;
-        }
-
-        Vector3 checkPos = transform.position;
-        float bestDistance = float.MaxValue;
-        Vector3 bestEdgePos = transform.position;
-
-        for (int i = 0; i < Mathf.Round(edgeDetectDistance / stepSize); i++)
-        {
-            checkPos.x += searchDir * stepSize;
-            RaycastHit2D hit = Physics2D.Raycast(checkPos, Vector2.down, 0.5f, groundLayer);
-            
-            if (hit.collider == null)
-            {
-                float distToEdge = Vector2.Distance(rb.position, new Vector2(checkPos.x, rb.position.y));
-                if (distToEdge < bestDistance)
-                {
-                    bestDistance = distToEdge;
-                    bestEdgePos = checkPos;
-                }
-                break;
-            }
-        }
-
-        if (bestDistance < float.MaxValue)
-        {
-            targetEdgePoint = bestEdgePos;
-            hasFoundEdge = true;
-        }
-    }
 
     bool TargetInDistance()
     {
         return Vector2.Distance(transform.position, target.position) < activateDistance;
+    }
+
+    Vector2 SnapToAxis(Vector2 input)
+    {
+        if (Mathf.Abs(input.x) >= Mathf.Abs(input.y))
+        {
+            return new Vector2(Mathf.Sign(input.x), 0f);
+        }
+
+        return new Vector2(0f, Mathf.Sign(input.y));
     }
 
     void OnPathComplete(Path p)
@@ -237,7 +185,6 @@ public class EnemyScript : MonoBehaviour
         {
             path = p;
             currentWaypoint = 0;
-            hasFoundEdge = false;
         }
     }
 

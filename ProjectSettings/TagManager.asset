@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Enemy
   - Ground
+  - DropLedge
   layers:
   - Default
   - TransparentFX

@@ -11,10 +11,10 @@ GameObject:
   - component: {fileID: 149625477958095743}
   - component: {fileID: 9084228653137471896}
   - component: {fileID: 8556443652286233641}
+  - component: {fileID: 3838857139076894901}
   - component: {fileID: 1407739080504272528}
   - component: {fileID: 3482643918491413600}
   - component: {fileID: 5677290390732440778}
-  - component: {fileID: 3838857139076894901}
   m_Layer: 7
   m_Name: Enemy
   m_TagString: Enemy
@@ -123,6 +123,34 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!114 &3838857139076894901
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4152884040272281401}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 373b52eb9bf8c40f785bb6947a1aee66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: AstarPathfindingProject::Pathfinding.Seeker
+  version: 1
+  drawGizmos: 1
+  detailedGizmos: 1
+  startEndModifier:
+    addPoints: 1
+    exactStartPoint: 1
+    exactEndPoint: 1
+    useRaycasting: 0
+    mask:
+      serializedVersion: 2
+      m_Bits: 4294967295
+    useGraphRaycasting: 0
+  traversableTags: -1
+  tagPenalties: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  graphMask:
+    value: -1
 --- !u!114 &1407739080504272528
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -148,10 +176,7 @@ MonoBehaviour:
   followEnabled: 1
   jumpEnabled: 1
   directionLookEnabled: 1
-  verticalDetourThreshold: 1
-  edgeDetectDistance: 2
-  edgeDetectStepSize: 0.3
-  enableEdgeDetection: 1
+  axisAlignedMovement: 1
   knockbackForce: 10
   knockbackDuration: 0.5
 --- !u!95 &3482643918491413600
@@ -213,31 +238,3 @@ CapsuleCollider2D:
   m_Offset: {x: -0.000037725575, y: -0.015003093}
   m_Size: {x: 0.19018824, y: 0.1599958}
   m_Direction: 1
---- !u!114 &3838857139076894901
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4152884040272281401}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 373b52eb9bf8c40f785bb6947a1aee66, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: AstarPathfindingProject::Pathfinding.Seeker
-  version: 1
-  drawGizmos: 1
-  detailedGizmos: 1
-  startEndModifier:
-    addPoints: 1
-    exactStartPoint: 1
-    exactEndPoint: 1
-    useRaycasting: 0
-    mask:
-      serializedVersion: 2
-      m_Bits: 4294967295
-    useGraphRaycasting: 0
-  traversableTags: -1
-  tagPenalties: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-  graphMask:
-    value: -1
