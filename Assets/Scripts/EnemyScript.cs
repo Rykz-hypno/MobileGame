@@ -18,11 +18,10 @@ public class EnemyScript : MonoBehaviour
     public float nextWaypointDistance = 3f;
 
     [Header("Movement")]
-    public float speed = 200f;
-    public float jumpForce = 100f;
+    public float speed = 4f;
+    public float jumpForce = 12f;
     public float jumpCooldown = 1f;
     public float jumpNodeHeightRequirement = 0.8f;
-    public float minMovementThreshold = 0.1f;
     public bool followEnabled = true;
     public bool jumpEnabled = true;
     public bool directionLookEnabled = true;
@@ -175,11 +174,11 @@ public class EnemyScript : MonoBehaviour
         {
             if (rb.linearVelocity.x > 0.05f)
             {
-                transform.localScale = new Vector3(-1f * Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+                transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
             }
             else if (rb.linearVelocity.x < -0.05f)
             {
-                transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+                transform.localScale = new Vector3(-1f * Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
             }
         }
     }
