@@ -32,7 +32,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 5, y: 5, z: 5}
+  m_LocalScale: {x: 6.5521593, y: 6.5521593, z: 6.5521593}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
@@ -112,7 +112,7 @@ Rigidbody2D:
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_GravityScale: 2
-  m_Material: {fileID: 6200000, guid: 2c107a1f41e4b8b4398c0c2ae0d429c7, type: 2}
+  m_Material: {fileID: 6200000, guid: f46e1c7b3da53a446b806db94b990c3a, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -140,8 +140,8 @@ MonoBehaviour:
   detailedGizmos: 1
   startEndModifier:
     addPoints: 1
-    exactStartPoint: 1
-    exactEndPoint: 1
+    exactStartPoint: 4
+    exactEndPoint: 0
     useRaycasting: 0
     mask:
       serializedVersion: 2
@@ -166,13 +166,14 @@ MonoBehaviour:
   currentHealth: 4
   maxHealth: 4
   target: {fileID: 0}
-  activateDistance: 100
-  pathUpdateSeconds: 0.5
-  nextWaypointDistance: 3
+  activateDistance: 50
+  pathUpdateSeconds: 0.3
+  nextWaypointDistance: 10
   speed: 4
-  jumpForce: 14
+  jumpForce: 12
   jumpCooldown: 1
-  jumpNodeHeightRequirement: 0.4
+  jumpNodeHeightRequirement: 0.8
+  minMovementThreshold: 0.4
   followEnabled: 1
   jumpEnabled: 1
   directionLookEnabled: 1
@@ -211,7 +212,7 @@ CapsuleCollider2D:
   m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 2c107a1f41e4b8b4398c0c2ae0d429c7, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
