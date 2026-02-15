@@ -4,9 +4,9 @@ using UnityEngine.InputSystem;
 public class PlayerMovement : MonoBehaviour
 {
     public PlayerCombat playerCombat;
+    public float jumpForce = 12f;
     private float horizontalInput;
     private float speed = 7f;
-    private float jumpForce = 12f;
     private bool isFacingRight = true;
     private bool isRunning = false;
 

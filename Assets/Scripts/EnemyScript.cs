@@ -22,6 +22,7 @@ public class EnemyScript : MonoBehaviour
     public float jumpForce = 100f;
     public float jumpCooldown = 1f;
     public float jumpNodeHeightRequirement = 0.8f;
+    public float minMovementThreshold = 0.1f;
     public bool followEnabled = true;
     public bool jumpEnabled = true;
     public bool directionLookEnabled = true;
@@ -97,13 +98,25 @@ public class EnemyScript : MonoBehaviour
 
     void PathFollow()
     {
-        if (path == null || currentWaypoint >= path.vectorPath.Count)
+        if (path == null)
         {
             return;
         }
 
+        // Check if we've reached the end of the path
+        if (currentWaypoint >= path.vectorPath.Count)
+        {
+            // We're at the end - stop moving or wait for new path
+            return;
+        }
+
+        // Get current and next waypoint
+        Vector2 currentPos = rb.position;
+        Vector2 targetPos = path.vectorPath[currentWaypoint];
+        
         // Calculate direction to current waypoint
-        Vector2 direction = ((Vector2)path.vectorPath[currentWaypoint] - rb.position).normalized;
+        Vector2 direction = (targetPos - currentPos).normalized;
+        
         if (direction.x != 0)
         {
             lastMoveDir = Mathf.Sign(direction.x);
@@ -117,14 +130,22 @@ public class EnemyScript : MonoBehaviour
         
         Vector2 force = direction * speed;
 
-        // Jump when needed
+        // Check if next waypoint requires a jump
         if (jumpEnabled && isGrounded && !isInAir && !isOnCoolDown)
         {
-            if (direction.y > jumpNodeHeightRequirement)
+            // Look ahead to see if we need to jump
+            if (currentWaypoint + 1 < path.vectorPath.Count)
             {
-                isJumping = true;
-                rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
-                StartCoroutine(JumpCoolDown());
+                Vector2 nextWaypoint = path.vectorPath[currentWaypoint + 1];
+                float heightDifference = nextWaypoint.y - currentPos.y;
+                
+                // Jump if next waypoint is significantly higher
+                if (heightDifference > jumpNodeHeightRequirement)
+                {
+                    isJumping = true;
+                    rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+                    StartCoroutine(JumpCoolDown());
+                }
             }
         }
 
@@ -143,7 +164,7 @@ public class EnemyScript : MonoBehaviour
         rb.linearVelocity = new Vector2(force.x, rb.linearVelocity.y);
 
         // Move to next waypoint when close enough
-        float distance = Vector2.Distance(rb.position, path.vectorPath[currentWaypoint]);
+        float distance = Vector2.Distance(currentPos, targetPos);
         if (distance < nextWaypointDistance)
         {
             currentWaypoint++;
@@ -184,7 +205,28 @@ public class EnemyScript : MonoBehaviour
         if (!p.error)
         {
             path = p;
-            currentWaypoint = 0;
+            // Only reset waypoint if we're starting a completely new path
+            // or if we're far from the current path
+            if (currentWaypoint >= path.vectorPath.Count || path.vectorPath.Count < 2)
+            {
+                currentWaypoint = 0;
+            }
+            else
+            {
+                // Find closest waypoint to continue from
+                float closestDist = float.MaxValue;
+                int closestIndex = 0;
+                for (int i = 0; i < path.vectorPath.Count; i++)
+                {
+                    float dist = Vector2.Distance(rb.position, path.vectorPath[i]);
+                    if (dist < closestDist)
+                    {
+                        closestDist = dist;
+                        closestIndex = i;
+                    }
+                }
+                currentWaypoint = Mathf.Min(closestIndex, currentWaypoint);
+            }
         }
     }
 
