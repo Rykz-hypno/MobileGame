@@ -271,6 +271,7 @@ public class EnemyScript : MonoBehaviour
 
     void Die()
     {
+        // TODO: Lägg till dödseffekt, poäng, etc.
         Destroy(gameObject);
     }
 }
