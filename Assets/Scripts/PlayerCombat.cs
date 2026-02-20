@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+
 public class PlayerCombat : MonoBehaviour
 {
     public Transform attackPoint;
@@ -16,13 +17,15 @@ public class PlayerCombat : MonoBehaviour
     {
         PlayerAnim.SetTrigger("Attack");
     }
-        public void OnAttack(InputAction.CallbackContext context)
+
+    public void OnAttack(InputAction.CallbackContext context)
     {
         if (context.started)
         {
             Attack();
         }
     }
+
     void OnCollisionEnter2D(Collision2D other)
     {
         if (other.gameObject.CompareTag("Enemy"))
@@ -43,6 +46,26 @@ public class PlayerCombat : MonoBehaviour
         }
     }
 
+    public void DealDamage() // Kalla denna från Animation Event
+    {
+        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, weaponRange, enemyLayers);
 
+        foreach (Collider2D enemy in hitEnemies)
+        {
+            Debug.Log("Hit enemy: " + enemy.name);
+            EnemyScript enemyScript = enemy.GetComponent<EnemyScript>();
+            if (enemyScript != null)
+            {
+                enemyScript.TakeDamage(attackDamage);
+            }
+        }
+    }
 
+    void OnDrawGizmosSelected()
+    {
+        if (attackPoint == null) return;
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(attackPoint.position, weaponRange);
+    }
 }

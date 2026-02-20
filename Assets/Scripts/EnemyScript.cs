@@ -252,9 +252,23 @@ public class EnemyScript : MonoBehaviour
         }
     }
 
+    void Awake()
+    {
+        rb = GetComponent<Rigidbody2D>();
+        if (currentHealth <= 0) currentHealth = maxHealth;
+    }
+
+    public void SetHealth(int newMaxHealth)
+    {
+        maxHealth = Mathf.Max(1, newMaxHealth);
+        currentHealth = maxHealth;
+        Debug.Log($"[Enemy] SetHealth -> {currentHealth}/{maxHealth}");
+    }
+
     public void TakeDamage(int damage)
     {
-        currentHealth -= damage;
+        Debug.Log($"[Enemy] TakeDamage called: {damage}, before: {currentHealth}/{maxHealth}");
+        currentHealth -= Mathf.Max(0, damage);
 
         if (target != null && rb != null)
         {
@@ -265,6 +279,7 @@ public class EnemyScript : MonoBehaviour
 
         if (currentHealth <= 0)
         {
+            Debug.Log("[Enemy] Die()");
             Die();
         }
     }
