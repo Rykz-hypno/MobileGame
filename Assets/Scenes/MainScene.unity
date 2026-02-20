@@ -1253,7 +1253,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.9756279, y: 3.4601016}
+  m_Offset: {x: -1.4849534, y: 4.025202}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -1263,7 +1263,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 34.954308, y: 19.883133}
+  m_Size: {x: 34.93884, y: 20.012459}
   m_EdgeRadius: 0
 --- !u!4 &634818470
 Transform:
@@ -3145,8 +3145,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 409}
-  m_SizeDelta: {x: 262.524, y: 85.176}
+  m_AnchoredPosition: {x: 0, y: 409.00003}
+  m_SizeDelta: {x: 403.7614, y: 203.72}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1794314719
 MonoBehaviour:
@@ -3170,8 +3170,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 16d5e3a82b56627458236b7664982eef, type: 2}
+  m_sharedMaterial: {fileID: 85915702333096065, guid: 16d5e3a82b56627458236b7664982eef, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

@@ -84,7 +84,7 @@ public class WaveManager : MonoBehaviour
         }
 
         int secondsLeft = Mathf.CeilToInt(clampedTime);
-        waveTimerText.text = "Nästa våg om: " + secondsLeft + "s";
+        waveTimerText.text = "Next Wave in: " + secondsLeft + "s";
     }
 
     void StartWave()
