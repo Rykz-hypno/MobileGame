@@ -13,13 +13,32 @@ public class PlayerCombat : MonoBehaviour
     public int playerHealth = 12;
     public int damagePerHit = 1;
 
+    public PlayerMovement Movement;
+    public GameManager GameManager;
+
+
+    public void Start()
+    {
+        if (Movement == null)
+        {
+            Movement = FindFirstObjectByType<PlayerMovement>();
+        }
+    }
+    private bool CanAct()
+    {
+        return playerHealth > 0 && Movement != null && Movement.CanMove;
+    }
+
     public void Attack()
     {
+        if (!CanAct()) return;
         PlayerAnim.SetTrigger("Attack");
     }
 
     public void OnAttack(InputAction.CallbackContext context)
     {
+        if (!CanAct()) return;
+
         if (context.started)
         {
             Attack();
@@ -40,13 +59,19 @@ public class PlayerCombat : MonoBehaviour
     {
         playerHealth -= damagePerHit;
         Debug.Log("Player took " + damagePerHit + " damage. Health: " + playerHealth);
+
         if (playerHealth <= 0)
         {
+            Movement.DisableMovement();
+            PlayerAnim.ResetTrigger("Attack"); // stoppa attackanimationen
+
+            GameManager.ShowDeathScreen();
+
             Debug.Log("Player Died");
         }
     }
 
-    public void DealDamage() // Kalla denna från Animation Event
+    public void DealDamage() 
     {
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, weaponRange, enemyLayers);
 

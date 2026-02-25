@@ -1,5 +1,6 @@
 using Pathfinding;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Seeker), typeof(Rigidbody2D))]
@@ -286,7 +287,31 @@ public class EnemyScript : MonoBehaviour
 
     void Die()
     {
-        // TODO: Lägg till dödseffekt, poäng, etc.
         Destroy(gameObject);
+    }
+
+    private static readonly HashSet<EnemyScript> aliveEnemies = new HashSet<EnemyScript>();
+
+    private void OnEnable()
+    {
+        aliveEnemies.Add(this);
+    }
+
+    private void OnDisable()
+    {
+        aliveEnemies.Remove(this);
+    }
+
+    public static void KillAllEnemies()
+    {
+        // Kopia för att undvika "collection modified" när enemies förstörs
+        var snapshot = new List<EnemyScript>(aliveEnemies);
+        foreach (var enemy in snapshot)
+        {
+            if (enemy != null)
+            {
+                enemy.Die();
+            }
+        }
     }
 }

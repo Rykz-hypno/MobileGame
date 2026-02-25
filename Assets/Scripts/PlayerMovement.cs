@@ -9,6 +9,7 @@ public class PlayerMovement : MonoBehaviour
     private float speed = 7f;
     private bool isFacingRight = true;
     private bool isRunning = false;
+    private bool canMove = true;
 
     [SerializeField] private Animator animator;
     [SerializeField] private Rigidbody2D rb;
@@ -34,11 +35,14 @@ public class PlayerMovement : MonoBehaviour
     }
     private void FixedUpdate()
     {
+        if (!canMove) return;
         rb.linearVelocity = new Vector2(horizontalInput * speed, rb.linearVelocity.y);
     }
 
     public void OnMove(InputAction.CallbackContext context)
     {
+        if (!canMove) return;
+
         horizontalInput = context.ReadValue<Vector2>().x;
         Flip();
 
@@ -53,6 +57,8 @@ public class PlayerMovement : MonoBehaviour
 
     public void OnJump(InputAction.CallbackContext context)
     {
+        if (!canMove) return;
+
         if (context.started && IsGrounded())
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
@@ -63,6 +69,21 @@ public class PlayerMovement : MonoBehaviour
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.y * 0.5f);
         }
     }
+
+    public void DisableMovement()
+    {
+        canMove = false;
+        horizontalInput = 0f;
+        rb.linearVelocity = Vector2.zero;
+        animator.SetBool("isRunning", false);
+    }
+
+    public void EnableMovement()
+    {
+        canMove = true;
+    }
+
+    public bool CanMove => canMove;
 
     private bool IsGrounded()
     {

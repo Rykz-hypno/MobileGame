@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Video;
 
 public class GameManager : MonoBehaviour
 {
@@ -8,6 +7,10 @@ public class GameManager : MonoBehaviour
     
     private GameState _currentState = GameState.MainMenu;
     private InputAction _escapeAction;
+
+    [SerializeField] private GameObject gameplayCanvas;
+    [SerializeField] private GameObject deathCanvas;
+
 
     private void Awake()
     {
@@ -21,6 +24,11 @@ public class GameManager : MonoBehaviour
 
         QualitySettings.vSyncCount = 0;
         Application.targetFrameRate = 240;
+
+        SetGameState(GameState.Playing);
+
+        if (gameplayCanvas != null) gameplayCanvas.SetActive(true);
+        if (deathCanvas != null) deathCanvas.SetActive(false);
 
         DontDestroyOnLoad(gameObject);
     }
@@ -65,5 +73,19 @@ public class GameManager : MonoBehaviour
     public void QuitGame()
     {
         Application.Quit();
+    }
+    public void ReturnToMainMenu()
+    {
+        LoadScene("Menu");
+        SetGameState(GameState.MainMenu);
+    }
+    public void ShowDeathScreen()
+    {
+        EnemyScript.KillAllEnemies();
+
+        if (gameplayCanvas != null) gameplayCanvas.SetActive(false);
+        if (deathCanvas != null) deathCanvas.SetActive(true);
+
+        SetGameState(GameState.GameOver);
     }
 }

@@ -24,6 +24,13 @@ public class SpawnerScript : MonoBehaviour
 
     void Update()
     {
+        // Stoppa all spawn när spelet inte är i "Playing" state
+        if (GameManager.Instance != null &&
+            GameManager.Instance.GetGameState() != GameManager.GameState.Playing)
+        {
+            return;
+        }
+
         CleanupDeadEnemies();
         SpawnTimer += Time.deltaTime;
 
