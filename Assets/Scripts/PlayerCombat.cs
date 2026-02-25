@@ -23,6 +23,11 @@ public class PlayerCombat : MonoBehaviour
         {
             Movement = FindFirstObjectByType<PlayerMovement>();
         }
+
+        if (GameManager == null)
+        {
+            GameManager = GameManager.Instance;
+        }
     }
     private bool CanAct()
     {
@@ -65,7 +70,10 @@ public class PlayerCombat : MonoBehaviour
             Movement.DisableMovement();
             PlayerAnim.ResetTrigger("Attack"); // stoppa attackanimationen
 
-            GameManager.ShowDeathScreen();
+            if (GameManager != null)
+                GameManager.ShowDeathScreen();
+            else
+                GameManager.Instance?.ShowDeathScreen();
 
             Debug.Log("Player Died");
         }

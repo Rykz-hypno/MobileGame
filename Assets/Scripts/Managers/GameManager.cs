@@ -33,7 +33,7 @@ public class GameManager : MonoBehaviour
 
         DontDestroyOnLoad(gameObject);
 
-        // 1) Fyll actions FÖRST
+        // actions
         _buttonActions["DeathCanvas/RetryButton"] = () => LoadScene("MainScene");
         _buttonActions["DeathCanvas/MenuButton"] = ReturnToMainMenu;
         _buttonActions["DeathCanvas/ExitButton"] = QuitGame;
@@ -47,10 +47,8 @@ public class GameManager : MonoBehaviour
         _buttonActions["MenuCanvas/SoundButton"] = () => Debug.Log("Sound settings - not implemented");
         _buttonActions["MenuCanvas/ExitButton"] = QuitGame;
 
-        // 2) Registrera callback
         SceneManager.sceneLoaded += OnSceneLoaded;
 
-        // 3) Binda initial scen sist
         OnSceneLoaded(SceneManager.GetActiveScene(), LoadSceneMode.Single);
     }
 
@@ -61,15 +59,13 @@ public class GameManager : MonoBehaviour
         gameplayCanvas = GetCanvas("GameCanvas"); 
         deathCanvas = GetCanvas("DeathCanvas");
 
-        // Registrera knappar för alla canvas som finns i scenen
         foreach (var canvasName in _canvasMap.Keys)
             SetupButtons(canvasName);
 
         if (scene.name == "MainScene")
         {
             SetGameState(GameState.Playing);
-            if (gameplayCanvas != null) gameplayCanvas.SetActive(true);
-            if (deathCanvas != null) deathCanvas.SetActive(false);
+            SetOnlyCanvasActive("GameCanvas");
         }
     }
 
@@ -94,7 +90,7 @@ public class GameManager : MonoBehaviour
         var buttons = canvas.GetComponentsInChildren<Button>(true);
         foreach (var button in buttons)
         {
-            // Ta bort denna rad om du även använder Inspector OnClick:
+
             button.onClick.RemoveAllListeners();
 
             var key = $"{canvasName}/{button.name}";
@@ -164,12 +160,8 @@ public class GameManager : MonoBehaviour
     {
         EnemyScript.KillAllEnemies();
 
-        if (gameplayCanvas != null) gameplayCanvas.SetActive(false);
-        if (deathCanvas != null)
-        {
-            deathCanvas.SetActive(true);
-            SetupButtons("DeathCanvas");
-        }
+        SetOnlyCanvasActive("DeathCanvas");
+        SetupButtons("DeathCanvas");
 
         SetGameState(GameState.GameOver);
     }
@@ -177,5 +169,14 @@ public class GameManager : MonoBehaviour
     private void OnDestroy()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void SetOnlyCanvasActive(string canvasToShow)
+    {
+        foreach (var kvp in _canvasMap)
+        {
+            if (kvp.Value != null)
+                kvp.Value.SetActive(kvp.Key == canvasToShow);
+        }
     }
 }

@@ -30,6 +30,14 @@ public class WaveManager : MonoBehaviour
 
     void Update()
     {
+        if (GameManager.Instance != null &&
+            GameManager.Instance.GetGameState() != GameManager.GameState.Playing)
+        {
+            isCountdownActive = false;
+            UpdateWaveTimerText();
+            return;
+        }
+
         if (spawner == null)
         {
             UpdateWaveTimerText();
