@@ -112,4 +112,11 @@ public class WaveManager : MonoBehaviour
 
         Debug.Log("Starting Wave " + currentWave + " | Enemies: " + enemiesThisWave + " | Enemy HP: " + enemyHealthThisWave);
     }
+
+    public int CurrentWave => currentWave;
+
+    public void SetCurrentWaveFromSave(int savedWave)
+    {
+        currentWave = Mathf.Max(1, savedWave);
+    }
 }

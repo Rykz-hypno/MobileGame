@@ -10,6 +10,9 @@ public class EnemyScript : MonoBehaviour
     public int currentHealth;
     public int maxHealth = 100;
 
+    public int CurrentHealth => currentHealth;
+    public int MaxHealth => maxHealth;
+
     [Header("Target")]
     public Transform target;
 
@@ -46,7 +49,9 @@ public class EnemyScript : MonoBehaviour
 
     void Start()
     {
-        currentHealth = maxHealth;
+        if (currentHealth <= 0 || currentHealth > maxHealth)
+            currentHealth = maxHealth;
+
         seeker = GetComponent<Seeker>();
         rb = GetComponent<Rigidbody2D>();
         groundLayer = LayerMask.GetMask("Ground");
@@ -259,11 +264,16 @@ public class EnemyScript : MonoBehaviour
         if (currentHealth <= 0) currentHealth = maxHealth;
     }
 
-    public void SetHealth(int newMaxHealth)
+    public void SetHealth(int hp)
     {
-        maxHealth = Mathf.Max(1, newMaxHealth);
+        maxHealth = Mathf.Max(1, hp);
         currentHealth = maxHealth;
-        Debug.Log($"[Enemy] SetHealth -> {currentHealth}/{maxHealth}");
+    }
+
+    public void SetHealthState(int savedMaxHealth, int savedCurrentHealth)
+    {
+        maxHealth = Mathf.Max(1, savedMaxHealth);
+        currentHealth = Mathf.Clamp(savedCurrentHealth, 1, maxHealth);
     }
 
     public void TakeDamage(int damage)

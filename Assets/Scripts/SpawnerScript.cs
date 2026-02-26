@@ -80,4 +80,69 @@ public class SpawnerScript : MonoBehaviour
         aliveEnemies.RemoveAll(enemy => enemy == null);
         currentEnemyCount = aliveEnemies.Count;
     }
+
+    public int CurrentEnemyCount => currentEnemyCount;
+    public int SpwanCount => spawnCount; // valfri bakåtkompatibel stavning om du vill
+    public int SpwanMaxCount => maxSpawnCount;
+
+    public int SpawnedCount => spawnCount;
+    public int MaxSpawnCount => maxSpawnCount;
+    public float CurrentSpawnTimer => SpawnTimer;
+    public int CurrentWaveEnemyHealth => currentWaveEnemyHealth;
+
+    public void RefreshEnemyCounts()
+    {
+        CleanupDeadEnemies();
+    }
+
+    public List<EnemyScript> GetAliveEnemies()
+    {
+        CleanupDeadEnemies();
+        List<EnemyScript> result = new();
+        foreach (var go in aliveEnemies)
+        {
+            if (go == null) continue;
+            var enemy = go.GetComponent<EnemyScript>();
+            if (enemy != null) result.Add(enemy);
+        }
+        return result;
+    }
+
+    public void RestoreFromSave(
+        int savedMaxSpawnCount,
+        int savedSpawnCount,
+        float savedSpawnTimer,
+        int savedWaveEnemyHealth,
+        List<EnemySaveData> savedEnemies)
+    {
+        foreach (var go in aliveEnemies)
+        {
+            if (go != null) Destroy(go);
+        }
+        aliveEnemies.Clear();
+
+        maxSpawnCount = Mathf.Max(0, savedMaxSpawnCount);
+        spawnCount = Mathf.Clamp(savedSpawnCount, 0, maxSpawnCount);
+        SpawnTimer = Mathf.Max(0f, savedSpawnTimer);
+        currentWaveEnemyHealth = Mathf.Max(1, savedWaveEnemyHealth);
+
+        if (savedEnemies != null)
+        {
+            foreach (var e in savedEnemies)
+            {
+                Vector3 pos = new Vector3(e.x, e.y, e.z);
+                GameObject spawnedEnemy = Instantiate(objectToSpawn, pos, Quaternion.identity);
+
+                EnemyScript enemy = spawnedEnemy.GetComponent<EnemyScript>();
+                if (enemy != null)
+                {
+                    enemy.SetHealthState(e.maxHealth, e.currentHealth);
+                }
+
+                aliveEnemies.Add(spawnedEnemy);
+            }
+        }
+
+        CleanupDeadEnemies();
+    }
 }

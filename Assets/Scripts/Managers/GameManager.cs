@@ -3,7 +3,8 @@ using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.Linq;
-using System.Collections.Generic; // <-- ny
+using System.Collections;
+using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour
 {
@@ -36,14 +37,17 @@ public class GameManager : MonoBehaviour
         // actions
         _buttonActions["DeathCanvas/RetryButton"] = () => LoadScene("MainScene");
         _buttonActions["DeathCanvas/MenuButton"] = ReturnToMainMenu;
-        _buttonActions["DeathCanvas/ExitButton"] = QuitGame;
 
         _buttonActions["PauseCanvas/ResumeButton"] = () => SetGameState(GameState.Playing);
         _buttonActions["PauseCanvas/MenuButton"] = ReturnToMainMenu;
+        _buttonActions["PauseCanvas/SaveButton"] = SaveGame;
+        _buttonActions["PauseCanvas/LoadButton"] = LoadGame;
 
         _buttonActions["GameCanvas/PauseButton"] = () => SetGameState(GameState.Paused);
+        _buttonActions["GameCanvas/SaveButton"] = SaveGame; // om du har save i HUD
 
         _buttonActions["MenuCanvas/PlayButton"] = StartGame;
+        _buttonActions["MenuCanvas/LoadButton"] = LoadGame; // om du har load i meny
         _buttonActions["MenuCanvas/SoundButton"] = () => Debug.Log("Sound settings - not implemented");
         _buttonActions["MenuCanvas/ExitButton"] = QuitGame;
 
@@ -178,5 +182,32 @@ public class GameManager : MonoBehaviour
             if (kvp.Value != null)
                 kvp.Value.SetActive(kvp.Key == canvasToShow);
         }
+    }
+
+    private void SaveGame()
+    {
+        GameSaveSystem.SaveNow();
+    }
+
+    private void LoadGame()
+    {
+        StartCoroutine(LoadGameRoutine());
+    }
+
+    private IEnumerator LoadGameRoutine()
+    {
+        if (!GameSaveSystem.HasSave())
+            yield break;
+
+        if (SceneManager.GetActiveScene().name != "MainScene")
+        {
+            Time.timeScale = 1f;
+            var op = SceneManager.LoadSceneAsync("MainScene");
+            while (!op.isDone) yield return null;
+            yield return null; // vänta 1 frame så objekt hinner initieras
+        }
+
+        GameSaveSystem.LoadNow();
+        SetGameState(GameState.Playing);
     }
 }
