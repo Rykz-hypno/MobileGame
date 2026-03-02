@@ -5,6 +5,9 @@ public class WaveManager : MonoBehaviour
 {
     public SpawnerScript spawner;
     public TMP_Text waveTimerText;
+    [Header("Shop mellan waves")]
+    public GameObject intermissionShop;
+
     public int enemiesPerWave = 5;
     public int enemiesIncreasePerWave = 2;
     public int baseEnemyHealth = 100;
@@ -22,6 +25,7 @@ public class WaveManager : MonoBehaviour
             spawner = FindFirstObjectByType<SpawnerScript>();
         }
 
+        HideShop();
         StartWave();
         waveTimer = timeBetweenWaves;
         isCountdownActive = false;
@@ -34,12 +38,14 @@ public class WaveManager : MonoBehaviour
             GameManager.Instance.GetGameState() != GameManager.GameState.Playing)
         {
             isCountdownActive = false;
+            HideShop();
             UpdateWaveTimerText();
             return;
         }
 
         if (spawner == null)
         {
+            HideShop();
             UpdateWaveTimerText();
             return;
         }
@@ -50,11 +56,13 @@ public class WaveManager : MonoBehaviour
             {
                 isCountdownActive = true;
                 waveTimer = timeBetweenWaves;
+                ShowShop();
             }
 
             waveTimer -= Time.deltaTime;
             if (waveTimer <= 0f)
             {
+                HideShop();
                 StartWave();
                 waveTimer = timeBetweenWaves;
                 isCountdownActive = false;
@@ -64,9 +72,32 @@ public class WaveManager : MonoBehaviour
         {
             isCountdownActive = false;
             waveTimer = timeBetweenWaves;
+            HideShop();
         }
 
         UpdateWaveTimerText();
+    }
+
+    void ShowShop()
+    {
+        if (intermissionShop == null)
+        {
+            return;
+        }
+
+        Vector3 basePosition = intermissionShop.transform.position;
+        intermissionShop.transform.position = basePosition;
+        intermissionShop.SetActive(true);
+    }
+
+    void HideShop()
+    {
+        if (intermissionShop == null)
+        {
+            return;
+        }
+
+        intermissionShop.SetActive(false);
     }
 
     void UpdateWaveTimerText()
