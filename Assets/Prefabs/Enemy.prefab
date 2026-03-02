@@ -91,7 +91,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.21, y: 0.18}
+  m_Size: {x: 0.21, y: 0.19}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -173,7 +173,6 @@ MonoBehaviour:
   jumpForce: 12
   jumpCooldown: 1
   jumpNodeHeightRequirement: 0.8
-  minMovementThreshold: 0.4
   followEnabled: 1
   jumpEnabled: 1
   directionLookEnabled: 1

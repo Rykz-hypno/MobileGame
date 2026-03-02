@@ -15,6 +15,11 @@ public class GameManager : MonoBehaviour
 
     private GameObject gameplayCanvas;
     private GameObject deathCanvas;
+    private GameObject menuCreditsPanel;
+    private GameObject menuTitle;
+
+    [SerializeField] private string creditsPanelName = "CreditPanel";
+    [SerializeField] private string titleName = "Title";
 
     private readonly Dictionary<string, GameObject> _canvasMap = new();
     private readonly Dictionary<string, System.Action> _buttonActions = new();
@@ -38,17 +43,17 @@ public class GameManager : MonoBehaviour
         _buttonActions["DeathCanvas/RetryButton"] = () => LoadScene("MainScene");
         _buttonActions["DeathCanvas/MenuButton"] = ReturnToMainMenu;
 
-        _buttonActions["PauseCanvas/ResumeButton"] = () => SetGameState(GameState.Playing);
-        _buttonActions["PauseCanvas/MenuButton"] = ReturnToMainMenu;
+        _buttonActions["PauseCanvas/ResumeButton"] = ResumeGameFromPause;
+        _buttonActions["PauseCanvas/MenuButton"] = SaveAndReturnToMainMenu;
         _buttonActions["PauseCanvas/SaveButton"] = SaveGame;
         _buttonActions["PauseCanvas/LoadButton"] = LoadGame;
 
-        _buttonActions["GameCanvas/PauseButton"] = () => SetGameState(GameState.Paused);
+        _buttonActions["GameCanvas/PauseButton"] = PauseGameFromGameplay;
         _buttonActions["GameCanvas/SaveButton"] = SaveGame; // om du har save i HUD
 
         _buttonActions["MenuCanvas/PlayButton"] = StartGame;
         _buttonActions["MenuCanvas/LoadButton"] = LoadGame; // om du har load i meny
-        _buttonActions["MenuCanvas/SoundButton"] = () => Debug.Log("Sound settings - not implemented");
+        _buttonActions["MenuCanvas/CreditsButton"] = ToggleCreditsPanel;
         _buttonActions["MenuCanvas/ExitButton"] = QuitGame;
 
         SceneManager.sceneLoaded += OnSceneLoaded;
@@ -62,6 +67,7 @@ public class GameManager : MonoBehaviour
 
         gameplayCanvas = GetCanvas("GameCanvas"); 
         deathCanvas = GetCanvas("DeathCanvas");
+        ResolveMenuObjects();
 
         foreach (var canvasName in _canvasMap.Keys)
             SetupButtons(canvasName);
@@ -70,6 +76,10 @@ public class GameManager : MonoBehaviour
         {
             SetGameState(GameState.Playing);
             SetOnlyCanvasActive("GameCanvas");
+        }
+        else if (scene.name == "Menu")
+        {
+            SetCreditsVisible(false);
         }
     }
 
@@ -160,6 +170,24 @@ public class GameManager : MonoBehaviour
         SetGameState(GameState.MainMenu);
     }
 
+    private void ResumeGameFromPause()
+    {
+        SetGameState(GameState.Playing);
+        SetOnlyCanvasActive("GameCanvas");
+    }
+
+    private void PauseGameFromGameplay()
+    {
+        SetGameState(GameState.Paused);
+        SetOnlyCanvasActive("PauseCanvas");
+    }
+
+    private void SaveAndReturnToMainMenu()
+    {
+        SaveGame();
+        ReturnToMainMenu();
+    }
+
     public void ShowDeathScreen()
     {
         EnemyScript.KillAllEnemies();
@@ -182,6 +210,89 @@ public class GameManager : MonoBehaviour
             if (kvp.Value != null)
                 kvp.Value.SetActive(kvp.Key == canvasToShow);
         }
+    }
+
+    private void ToggleCreditsPanel()
+    {
+        if (menuCreditsPanel == null || menuTitle == null)
+        {
+            ResolveMenuObjects();
+        }
+
+        if (menuCreditsPanel == null || menuTitle == null)
+        {
+            Debug.LogWarning("CreditsPanel eller Title hittades inte i MenuCanvas.");
+            return;
+        }
+
+        bool shouldShowCredits = !menuCreditsPanel.activeSelf;
+        SetCreditsVisible(shouldShowCredits);
+    }
+
+    private void SetCreditsVisible(bool showCredits)
+    {
+        if (menuCreditsPanel != null)
+            menuCreditsPanel.SetActive(showCredits);
+
+        if (menuTitle != null)
+            menuTitle.SetActive(!showCredits);
+    }
+
+    private void ResolveMenuObjects()
+    {
+        var menuCanvas = GetCanvas("MenuCanvas");
+        if (menuCanvas == null)
+        {
+            menuCreditsPanel = null;
+            menuTitle = null;
+            return;
+        }
+
+        var creditsTransform = FindChildTransformByName(
+            menuCanvas.transform,
+            creditsPanelName,
+            "CreditsPanel",
+            "CreditPanel");
+
+        var titleTransform = FindChildTransformByName(
+            menuCanvas.transform,
+            titleName,
+            "Title");
+
+        menuCreditsPanel = creditsTransform != null ? creditsTransform.gameObject : null;
+        menuTitle = titleTransform != null ? titleTransform.gameObject : null;
+    }
+
+    private Transform FindChildTransformByName(Transform root, params string[] candidateNames)
+    {
+        if (root == null || candidateNames == null || candidateNames.Length == 0)
+            return null;
+
+        var allChildren = root.GetComponentsInChildren<Transform>(true);
+
+        foreach (var candidate in candidateNames)
+        {
+            var exactMatch = allChildren.FirstOrDefault(t =>
+                t != null &&
+                !string.IsNullOrWhiteSpace(t.name) &&
+                string.Equals(t.name, candidate, System.StringComparison.OrdinalIgnoreCase));
+
+            if (exactMatch != null)
+                return exactMatch;
+        }
+
+        foreach (var candidate in candidateNames)
+        {
+            var prefixMatch = allChildren.FirstOrDefault(t =>
+                t != null &&
+                !string.IsNullOrWhiteSpace(t.name) &&
+                t.name.StartsWith(candidate, System.StringComparison.OrdinalIgnoreCase));
+
+            if (prefixMatch != null)
+                return prefixMatch;
+        }
+
+        return null;
     }
 
     private void SaveGame()

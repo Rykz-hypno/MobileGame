@@ -13,7 +13,7 @@ public class PlayerCombat : MonoBehaviour
 
     public int playerHealth = 12;
     public int damagePerHit = 1;
-    public float takeDamageCooldown = 0.65f;
+    public float takeDamageCooldown = 1f;
 
     public PlayerMovement Movement;
     public GameManager GameManager;
@@ -48,6 +48,11 @@ public class PlayerCombat : MonoBehaviour
     public void Attack()
     {
         if (!CanAct()) return;
+        
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlayAttackSfx();
+        }
         PlayerAnim.SetTrigger("Attack");
     }
 
@@ -57,6 +62,7 @@ public class PlayerCombat : MonoBehaviour
 
         if (context.started)
         {
+            
             Attack();
         }
     }
@@ -69,6 +75,10 @@ public class PlayerCombat : MonoBehaviour
 
             if (TakeDamage())
             {
+                if (SoundManager.Instance != null)
+                {
+                    SoundManager.Instance.PlayHurtSfx();
+                }
                 PlayerAnim.SetTrigger("Hurt");
             }
         }

@@ -4,6 +4,11 @@ public class SoundManager : MonoBehaviour
 {
     public static SoundManager Instance { get; private set; }
 
+    [Header("Common Clips")]
+    [SerializeField] private AudioClip attackSfx;
+    [SerializeField] private AudioClip hurtSfx;
+    [SerializeField] private AudioClip gameplayMusic;
+
     [Header("Audio Sources")]
     [SerializeField] private AudioSource musicSource;
     [SerializeField] private AudioSource sfxSource;
@@ -26,6 +31,7 @@ public class SoundManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         SetupAudioSources();
+        PlayGameplayMusic();
     }
 
     public void PlayOneShot(AudioClip clip, float volumeScale = 1f)
@@ -36,6 +42,16 @@ public class SoundManager : MonoBehaviour
         }
 
         sfxSource.PlayOneShot(clip, Mathf.Clamp01(volumeScale));
+    }
+
+    public void PlayAttackSfx(float volumeScale = 1f)
+    {
+        PlayOneShot(attackSfx, volumeScale);
+    }
+
+    public void PlayHurtSfx(float volumeScale = 1f)
+    {
+        PlayOneShot(hurtSfx, volumeScale);
     }
 
     public void PlayMusic(AudioClip clip, bool loop = true)
@@ -53,6 +69,11 @@ public class SoundManager : MonoBehaviour
         musicSource.clip = clip;
         musicSource.loop = loop;
         musicSource.Play();
+    }
+
+    public void PlayGameplayMusic(bool loop = true)
+    {
+        PlayMusic(gameplayMusic, loop);
     }
 
     public void StopMusic()
